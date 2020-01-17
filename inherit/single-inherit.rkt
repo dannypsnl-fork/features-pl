@@ -1,6 +1,16 @@
 #lang racket
 
+(provide Class)
+(provide Class-id)
+(provide Class-parent)
+(provide type-upcasting)
+(provide class)
+
 (define class-unique-id 0)
+(define (get-unique-id)
+  (let ()
+    (set! class-unique-id (+ 1 class-unique-id))
+    class-unique-id))
 
 (struct Class [id parent])
 
@@ -20,33 +30,15 @@
     [(class name)
       (begin
         (check-ids stx #'(name))
-        #'(let ()
-          (set! name (Class class-unique-id 'no-parent))
-          (set! class-unique-id (+ 1 class-unique-id))))
+        #'(define name (Class (get-unique-id) 'no-parent)))
       ]
     [(class name parent)
       (begin
         (check-ids stx #'(name))
-        #'(let ()
-          (set! name (Class class-unique-id parent))
-          (set! class-unique-id (+ 1 class-unique-id))))
+        #'(define name (Class (get-unique-id) parent)))
       ]))
-
-(define A 'none)
-(class A)
-(printf "id of A: ~v\n" (Class-id A))
-
-(define B 'none)
-(class B A)
-(printf "id of B: ~v\n" (Class-id B))
-(printf "parent of B: ~v\n" (Class-id (Class-parent B)))
 
 (define (type-upcasting from to)
   (if (and (Class? (Class-parent from)) (eqv? (Class-id (Class-parent from)) (Class-id to)))
     to
     "can not convert"))
-
-(define C 'none)
-(class C)
-(printf "convert B to A: ~v\n" (Class-id (type-upcasting B A)))
-(printf "convert C to A: ~v\n" (type-upcasting C A))
