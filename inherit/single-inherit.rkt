@@ -40,3 +40,13 @@
 (class B A)
 (printf "id of B: ~v\n" (Class-id B))
 (printf "parent of B: ~v\n" (Class-id (Class-parent B)))
+
+(define (type-upcasting from to)
+  (if (and (Class? (Class-parent from)) (eqv? (Class-id (Class-parent from)) (Class-id to)))
+    to
+    "can not convert"))
+
+(define C 'none)
+(class C)
+(printf "convert B to A: ~v\n" (Class-id (type-upcasting B A)))
+(printf "convert C to A: ~v\n" (type-upcasting C A))
