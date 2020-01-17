@@ -4,27 +4,32 @@
 
 (struct Class [id parent])
 
+(begin-for-syntax
+  (define (check-ids stx forms)
+    (for-each
+     (lambda (form)
+       (unless (identifier? form)
+         (raise-syntax-error #f
+                             "not an identifier"
+                             stx
+                             form)))
+     (syntax->list forms))))
+
 (define-syntax (class stx)
   (syntax-case stx ()
     [(class name)
-      (if (identifier? #'name)
+      (begin
+        (check-ids stx #'(name))
         #'(let ()
           (set! name (Class class-unique-id 'no-parent))
-          (set! class-unique-id (+ 1 class-unique-id)))
-        (raise-syntax-error #f
-                            "not an identifier"
-                            stx
-                            #'name))
+          (set! class-unique-id (+ 1 class-unique-id))))
       ]
     [(class name parent)
-      (if (identifier? #'name)
+      (begin
+        (check-ids stx #'(name))
         #'(let ()
           (set! name (Class class-unique-id parent))
-          (set! class-unique-id (+ 1 class-unique-id)))
-        (raise-syntax-error #f
-                            "not an identifier"
-                            stx
-                            #'name))
+          (set! class-unique-id (+ 1 class-unique-id))))
       ]))
 
 (define A 'none)
