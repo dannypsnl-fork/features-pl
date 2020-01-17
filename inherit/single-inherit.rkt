@@ -4,17 +4,27 @@
 
 (struct Class [id parent])
 
-(define-syntax class
-  (syntax-rules ()
+(define-syntax (class stx)
+  (syntax-case stx ()
     [(class name)
-      (let ()
-        (set! name (Class class-unique-id 'no-parent))
-        (set! class-unique-id (+ 1 class-unique-id)))
+      (if (identifier? #'name)
+        #'(let ()
+          (set! name (Class class-unique-id 'no-parent))
+          (set! class-unique-id (+ 1 class-unique-id)))
+        (raise-syntax-error #f
+                            "not an identifier"
+                            stx
+                            #'name))
       ]
     [(class name parent)
-      (let ()
-        (set! name (Class class-unique-id parent))
-        (set! class-unique-id (+ 1 class-unique-id)))
+      (if (identifier? #'name)
+        #'(let ()
+          (set! name (Class class-unique-id parent))
+          (set! class-unique-id (+ 1 class-unique-id)))
+        (raise-syntax-error #f
+                            "not an identifier"
+                            stx
+                            #'name))
       ]))
 
 (define A 'none)
