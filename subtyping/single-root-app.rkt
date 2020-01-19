@@ -1,6 +1,6 @@
 #lang racket
 
-(require "single-inherit.rkt")
+(require "single-root.rkt")
 
 (class A)
 (printf "id of A: ~v\n" (Class-id A))
