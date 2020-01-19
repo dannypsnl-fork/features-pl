@@ -1,5 +1,7 @@
 #lang racket
 
+(require (for-syntax "utils.rkt"))
+
 (provide Class)
 (provide Class-id)
 (provide Class-parent)
@@ -13,17 +15,6 @@
     class-unique-id))
 
 (struct Class [id parent])
-
-(begin-for-syntax
-  (define (check-ids stx forms)
-    (for-each
-     (lambda (form)
-       (unless (identifier? form)
-         (raise-syntax-error #f
-                             "not an identifier"
-                             stx
-                             form)))
-     (syntax->list forms))))
 
 (define-syntax (class stx)
   (syntax-case stx ()
