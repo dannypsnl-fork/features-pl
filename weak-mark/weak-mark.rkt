@@ -28,6 +28,8 @@
     ; performance is not the point here
     (remove-duplicates (list* tag (var-tags self)))
   ))
+(: tag-ty : type -> var -> Void)
+(define tag-ty (lambda (ty) (lambda (arg-var) (var/add-tag arg-var ty))))
 
 (: application : func-type var -> Symbol)
 (define (application ft v)
@@ -51,9 +53,7 @@
 (define void (type "void")) ; (type Void)
 (define sorted (type "sorted")) ; (type sorted)
 (define x (var List '())) ; (var x : List)
-(: tag-sorted : var -> Void)
-(define tag-sorted (lambda (arg-var) (var/add-tag arg-var sorted)))
-(define sort (func-type List '() void (Some tag-sorted))) ; (func sort : (x:List) -> Void, after: tag x sorted)
+(define sort (func-type List '() void (Some (tag-ty sorted)))) ; (func sort : (x:List) -> Void, after: tag x sorted)
 (printf "(sort x):\n")
 (application sort x) ; (sort x)
 (define binary-search (func-type List (list sorted) int (None))) ; (func binary-search : (x:List with [sorted]) -> int, after: do-nothing)
