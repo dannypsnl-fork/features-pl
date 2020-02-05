@@ -45,6 +45,7 @@
         (cond
           ; remove tag that existing in variable but not in requirements
           [(not (member tag require-tags)) (var/remove-tag v tag)]))
+      ; remember to update tags, else it would refer to the origin tags
       (set! tags (var-tags v))
       ; after align tag, comparing tags and requirements, they should be the same
       (if (equal? (list->set require-tags) (list->set tags))
@@ -76,7 +77,7 @@
 (printf "(binary-search y):\n")
 (application binary-search y) ; (binary-search y), should be fine
 (printf "(modify-list y):\n")
-;;; FIXME: shouldn't get 'err-tag-mismatching at here
 (application modify-list y) ; (modify-list y)
 (printf "(binary-search y):\n")
+; after modifying, tag sorted should be removed and now y is not promised sorted, so binary-search cannot work with it.
 (application binary-search y) ; (binary-search y), should report error
