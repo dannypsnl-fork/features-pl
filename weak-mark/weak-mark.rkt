@@ -45,6 +45,7 @@
         (cond
           ; remove tag that existing in variable but not in requirements
           [(not (member tag require-tags)) (var/remove-tag v tag)]))
+      (set! tags (var-tags v))
       ; after align tag, comparing tags and requirements, they should be the same
       (if (equal? (list->set require-tags) (list->set tags))
         (let ()
@@ -52,8 +53,8 @@
           (cond
             [(Some? eval) ((Some-v eval) v)]) ; if some eval to do, apply it
         'ok)
-        'err-tag-mismatching))
-    'err)
+        (error (format "tags mismatching, expected: ~s but got: ~s" require-tags tags))))
+    (error (format "type mismatching, expected: ~s but got: ~s" (func-type-arg ft) (var-typ v))))
   )
 
 (define List (type "List")) ; (type List)
@@ -69,8 +70,6 @@
 (application binary-search x) ; (binary-search x), should be fine
 (define e (var int '())) ; (var e : int)
 (define y (var List '())) ; (var y : List)
-(printf "(binary-search y):\n")
-(application binary-search y) ; (binary-search y), should report error
 (define modify-list (func-type List '() void (None))) ; (func modify-list : x:List -> void, after: do-nothing)
 (printf "(sort y):\n")
 (application sort y) ; (sort y)
